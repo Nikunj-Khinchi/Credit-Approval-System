@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DEBUG=True
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=your_db_name
+      - DB_USER=your_db_user
+      - DB_PASSWORD=your_db_password
+    env_file:
+      - .env
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: your_db_name
+      POSTGRES_USER: your_db_user
+      POSTGRES_PASSWORD: your_db_password
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
